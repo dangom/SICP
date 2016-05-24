@@ -1,0 +1,92 @@
+#+TITLE: SICP Solutions - Chapter 1
+#+AUTHOR: Daniel Gomez
+#+DATE: 25.05.2016
+
+* 1.3
+#+BEGIN_SRC scheme :export both :output scalar
+(define square (lambda (x) (* x x)))
+(define (sos3 a b c)
+  (+ (square a) (square b) (square c)))
+ ;; should return 50
+(sos3 3 4 5)
+#+END_SRC
+
+#+RESULTS:
+: 50
+
+* 1.4
+#+BEGIN_SRC scheme :exports code
+(define (a-plus-abs-b a b)
+  ((if (> b 0) + -) a b))
+#+END_SRC
+If b is greater than 0 the expression will evaluate to ~(+ a b)~, otherwise to ~(- a b)~.
+
+* 1.5
+#+BEGIN_SRC scheme :exports code :eval never
+(define (p) (p))
+(define (test x y)
+  (if (= x 0)
+      0
+      y))
+(test 0 (p))
+#+END_SRC
+For an interpreter using applicative evaluation order, the test would never halt. Before
+calling the test, (p) would be evaluated to (p), which would in turn be evaluated to
+(p), entering an endless loop.
+Using normal evaluation order the test would return 0 before ever evaluating (p).
+
+* 1.6
+New-if is a standard procedure, and not a special form. Since Scheme uses applicative
+order evaluation, all arguments will be evaluated leading to an infinite recursion.
+
+* 1.12
+#+BEGIN_SRC scheme :exports both :output scalar
+;; Pascal's triangle. Line and column start at 0.
+(define (pascal line column)
+  (cond ((= column 0) 1)
+  ((< line 0) 0)
+  ((< column 0) 0)
+  ((> column line) 0)
+  (else (+ (pascal (- line 1) (- column 1)) (pascal (- line 1) column)))))
+;; Should return 6.
+(pascal 4 2)
+#+END_SRC
+
+#+RESULTS:
+: 6
+
+* 1.15
+#+BEGIN_SRC scheme :exports both :output scalar
+(define (cube x) (* x x x))
+(define counter 0)
+(define (procsin x)
+  (set! counter (+ counter 1)) ;; add this line to see how many times procsin is called.
+  (- (* 3 x) (* 4 (cube x))))
+
+(define (sine angle)
+  (if (not (> (abs angle) 0.1))
+      angle
+      (procsin (sine (/ angle 3.0 )))))
+(sine 12.15)
+;; And the number of times procsin was called is:
+counter
+#+END_SRC
+
+#+RESULTS:
+: 5
+
+* 1.16
+#+BEGIN_SRC scheme :exports both :output scalar
+(define square (lambda (x) (* x x)))
+(define (fast-expt b n)
+  (define (fast-expt-iter b n a)
+    (cond ((= n 0) a)
+    ((even? n) (fast-expt-iter (square b) (/ n 2) a))
+    (else (fast-expt-iter b (- n 1) (* a b)))))
+  (fast-expt-iter b n 1))
+
+(fast-expt 2 10)
+#+END_SRC
+
+#+RESULTS:
+: 1024
