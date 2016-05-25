@@ -1,0 +1,6 @@
+#+TITLE: Solutions to SICP exercises
+
+Personal solutions to the exercises of [[https://mitpress.mit.edu/sicp/full-text/book/book.html][Structure and Interpretation of Computer
+Programs]].
+
+Source code under src/, commented solutions as markdown .org files.
