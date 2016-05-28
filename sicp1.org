@@ -5,7 +5,7 @@
 
 Solution to selected problems from chapter 1. For code only, see sicp1.scm.
 
-* 1.3
+* 1.3 Sum of three squares
 #+BEGIN_SRC scheme :exports both :output scalar
 (define square (lambda (x) (* x x)))
 (define (sos3 a b c)
@@ -17,14 +17,15 @@ Solution to selected problems from chapter 1. For code only, see sicp1.scm.
 #+RESULTS:
 : 50
 
-* 1.4
+* 1.4 Procedure as return values
+
 #+BEGIN_SRC scheme :exports code
 (define (a-plus-abs-b a b)
   ((if (> b 0) + -) a b))
 #+END_SRC
 If b is greater than 0 the expression will evaluate to ~(+ a b)~, otherwise to ~(- a b)~.
 
-* 1.5
+* 1.5 Applicative vs. normal evaluation order
 #+BEGIN_SRC scheme :exports code :eval never
 (define (p) (p))
 (define (test x y)
@@ -38,11 +39,11 @@ calling the test, (p) would be evaluated to (p), which would in turn be evaluate
 (p), entering an endless loop.
 Using normal evaluation order the test would return 0 before ever evaluating (p).
 
-* 1.6
+* 1.6 New-if - a procedure to replace if
 New-if is a standard procedure, and not a special form. Since Scheme uses applicative
 order evaluation, all arguments will be evaluated leading to an infinite recursion.
 
-* 1.12
+* 1.12 Pascal's triangle
 #+BEGIN_SRC scheme :exports both :output scalar
 ;; Pascal's triangle. Line and column start at 0.
 (define (pascal line column)
@@ -58,7 +59,7 @@ order evaluation, all arguments will be evaluated leading to an infinite recursi
 #+RESULTS:
 : 6
 
-* 1.15
+* 1.15 Approximating sine
 #+BEGIN_SRC scheme :exports both :output scalar
 (define (cube x) (* x x x))
 (define counter 0)
@@ -78,7 +79,7 @@ counter
 #+RESULTS:
 : 5
 
-* 1.16
+* 1.16 Fast exponential
 #+BEGIN_SRC scheme :exports both :output scalar
 (define square (lambda (x) (* x x)))
 (define (fast-expt b n)
@@ -94,7 +95,7 @@ counter
 #+RESULTS:
 : 1024
 
-* 1.17
+* 1.17 Fast multiplication
 #+BEGIN_SRC scheme :exports both :output scalar
 (define (my* a b)
   (if (= b 0)
@@ -116,7 +117,7 @@ counter
 #+RESULTS:
 : 56
 
-* 1.18
+* 1.18 Iterative multiplication
 The solution here is to change the multiplier(x) and multiplicand(y) so as
 to reduce the problem to the multiplication of (x*y)*1. We can achieve
 this by simultaneously halving the multiplicand and doubling the multiplier
@@ -141,7 +142,7 @@ Here, the result is only incremented when the the multiplier is odd.
 #+RESULTS:
 : 56
 
-* 1.19
+* 1.19 Fast Fibonacci
 #+BEGIN_SRC scheme :exports both :output scalar
 (define (fib n)
   (define (fib-iter a b p q count)
@@ -166,7 +167,45 @@ Here, the result is only incremented when the the multiplier is odd.
 #+RESULTS:
 : 11765046532
 
+* 1.21 Smallest Divisor 
+
+#+BEGIN_SRC scheme :exports both :results list
+(define square (lambda (x) (* x x)))
+(define (smallest-divisor n)
+  (define (divides? a b)
+    (= (remainder b a) 0))
+  (define (find-divisor n test-divisor)
+    (cond ((> (square test-divisor) n) n)
+          ((divides? test-divisor n) test-divisor)
+          (else (find-divisor n (+ test-divisor 1)))))
+  (find-divisor n 2))
+
+(list
+(smallest-divisor 199)
+(smallest-divisor 1999)
+(smallest-divisor 19999))
+#+END_SRC
+
+#+RESULTS:
+- 199
+- 1999
+- 7
+
+* 1.22 Runtime search for primes
+#+BEGIN_SRC scheme :exports both
+;; Racket has another name for runtime, so we alias it.
+(define (runtime) (current-milliseconds))
+(define (timed-prime-test n)
+  (newline)
+  (display n)
+  (start-prime-test n (runtime)))
+(define (start-prime-test n start-time)
+  (if (prime? n)
+      (report-prime (- (runtime) start-time))))
+(define (report-prime elapsed-time)
+  (display " *** ")
+  (display elapsed-time))
+#+END_SRC
 
 
-
-
+* 1.25 Different expmod

@@ -1,0 +1,93 @@
+#+TITLE: SICP Solutions - Chapter 3
+#+AUTHOR: Daniel Gomez
+#+DATE: 26.05.2016
+
+
+Solution to selected problems from chapter 3. For code only, see sicp3.scm.
+
+* 3.1 Accumulator
+#+BEGIN_SRC scheme :exports both
+(define (make-accumulator initval)
+    (lambda (x) (begin
+                  (set! initval (+ initval x))
+                  initval)))
+(define A (make-accumulator 5))
+(A 20)
+#+END_SRC
+
+#+RESULTS:
+: 25
+
+* 3.2 Make-monitored
+#+BEGIN_SRC scheme :exports both
+(define (make-monitored func)
+  (let ((counter 0))
+    (define (dispatch m)
+      (cond ((eq? m 'how-many-calls?) counter)
+            ((eq? m 'reset-counter)
+             (begin (set! counter 0) counter))
+            (else
+             (begin (set! counter (+ counter 1))
+                    (func m)))))
+    dispatch))
+
+(define s (make-monitored sqrt))
+
+;; Call three times.
+(s 25)
+(s 199)
+(s 1771)
+
+;; Expects 3 and 0.
+(list
+ (s 'how-many-calls?)
+ (s 'reset-counter))
+#+END_SRC
+
+#+RESULTS:
+| 3 | 0 |
+
+* 3.5 Monte Carlo integration
+#+BEGIN_SRC scheme :exports both
+(define (random-in-range min max)
+  (let ((range (- max min))
+        (randval (random)))
+    (+ min (* range randval))))
+(define (monte-carlo trials experiment)
+  (define (iter trials-remaining trials-passed)
+    (cond ((= trials-remaining 0) (/ trials-passed trials))
+          ((experiment)
+           (iter (- trials-remaining 1) (+ trials-passed 1)))
+          (else
+           (iter (- trials-remaining 1) trials-passed))))
+  (iter trials 0))
+;; We define our procedure P(x,y) for the unit circle
+(define (p-unit-circle x y)
+  (if (< (+ (* x x) (* y y)) 1)
+      #t
+      #f))
+;; And the estimate-integral procedure
+(define (estimate-integral proc x-min x-max y-min y-max trials)
+  (let ((x-range (- x-max x-min))
+        (y-range (- y-max y-min)))
+    (define test
+      (lambda () (proc (random-in-range x-min x-max) (random-in-range y-min y-max))))
+    ;; Scale the ratio of trials-passed by the area of the rectangle.
+    (* (monte-carlo trials test) (* x-range y-range))))
+;; To estimate pi:
+(define (estimate-pi trials)
+  (estimate-integral p-unit-circle -1 1 -1 1 trials))
+
+;; Compare our estimate with built-in pi.
+(let ((pi-estimate (estimate-pi 100000)))
+  (- pi pi-estimate))
+#+END_SRC
+
+#+RESULTS:
+: 0.0038726535897932735
+
+
+
+
+  
+

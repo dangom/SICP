@@ -1,0 +1,9 @@
+#+TITLE: SICP Solutions - Chapter 2
+#+AUTHOR: Daniel Gomez
+#+DATE: 26.05.2016
+
+
+Solution to selected problems from chapter 2. For code only, see sicp2.scm.
+
+
+
